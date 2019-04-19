@@ -1,0 +1,465 @@
+#include<stdio.h>
+#include<unistd.h>
+#include<stdlib.h>
+#include<pthread.h>
+void *fun1();
+void *fun2();
+void *fun3();
+void *fun4();
+void *fun5();
+int m[5][3],n[5][3],alc[5][3], ava[5],co[5], ss[5];
+int soun,check=0,shared=0,count,sc=0;
+pthread_mutex_t l;
+int main(){
+	
+
+	printf("Enter Maximum Need for each thread:\n");
+	for(int i=0;i<5;i++){
+		printf("Enter for Thread %d\n",i+1);
+		for(int j=0;j<3;j++){
+			scanf("%d",&m[i][j]);
+		}
+	}
+	printf("Enter allocation for each thread:\n");
+	for(int i=0;i<5;i++){
+		printf("Enter for Thread %d :\n",i+1);
+		for(int j=0;j<3;j++){
+			scanf("%d",&alc[i][j]);			
+		}
+	}
+	printf("Enter Available resources:\n");
+	for(int i=0;i<3;i++){
+		scanf("%d",&ava[i]);
+	}
+	for(int i=0;i<5;i++){
+		for(int j=0;j<3;j++){
+			n[i][j] = m[i][j] - alc[i][j];
+		 }
+	}
+	pthread_t t1[5];
+	pthread_create(&t1[0],NULL,fun1,NULL);
+	
+	pthread_create(&t1[1],NULL,fun2,NULL);
+
+	pthread_create(&t1[2],NULL,fun3,NULL);
+
+	pthread_create(&t1[3],NULL,fun4,NULL);
+
+	pthread_create(&t1[4],NULL,fun5,NULL);
+	pthread_join(t1[0],NULL);
+	pthread_join(t1[1],NULL);
+	pthread_join(t1[2],NULL);
+	pthread_join(t1[3],NULL);
+	pthread_join(t1[4],NULL);
+	if(sc!=0){
+		printf("The value of shared data is %d",shared);
+	}
+	return 0;	
+}
+
+void *fun1(){
+	pthread_mutex_lock(&l);
+	int x1=-1;
+	if(check ==0){
+		printf("this is function 5 if");  		
+		do
+        	{
+            	     printf("\n Max matrix:\talcation matrix:\tNeed Matrix:\n");
+
+            	     for(int i = 0; i < 5; i++)
+            		{
+                	  for(int j = 0; j < 3; j++)
+                    		printf("%d ", m[i][j]);
+                	printf("\t\t");
+                	  for(int j = 0; j < 3; j++)
+                    		printf("%d ", alc[i][j]);
+			printf("\t\t");
+			   for(int j=0;j<3;j++)
+				printf("%d ",n[i][j]);			
+                	printf("\n");
+            	      }
+
+            		soun = -1;
+
+            	   for(int i = 0; i < 5; i++)
+            		{
+                	   if(co[i] == 0)
+                		{
+                    			soun = i ;
+                    			for(int j = 0; j < 3; j++)
+                    			{
+                        			if(ava[j] < n[i][j])
+                        				{
+                          					soun = -1;
+                            					break;
+                        			}
+                    			}
+                		}
+                		if(soun != -1)
+                    		break;
+            		}
+
+            		if(soun != -1)
+            		{
+                		printf("\nThread %d executed", soun + 1);
+                		ss[count] = soun + 1;
+                		count++;
+                		for(int j = 0; j < 3; j++)
+                			{
+                    				ava[j] += alc[soun][j];
+                    				alc[soun][j] = 0;
+                    				m[soun][j] = 0;
+                    				co[soun] = 1;
+                		}
+            		}
+        	}
+        	while(count !=5  && soun != -1);
+
+        	if(count == 5)
+        	{
+            		printf("\nThe system is in a safe state!! 5\n");
+            		printf("Safe Sequence : < ");
+            		for(int i = 0; i < 5; i++)
+                		printf("%d ", ss[i]);
+            		printf(">\n");
+			sc++;
+	    		check=x1;
+        	}
+        	else{printf("func5 else");
+	    		check=x1;
+            		printf("\nThe system is in an unsafe state!! 5");
+		}
+	}
+	
+		
+		int x=shared;
+		
+		x++;
+		sleep(1);
+		shared =x;
+		pthread_mutex_unlock(&l);
+	
+}
+void *fun2(){
+	pthread_mutex_lock(&l);
+		int x1=-1;
+	if(check ==0){
+		printf("this is function 5 if");  		
+		do
+        	{
+            	     printf("\n Max matrix:\talcation matrix:\tNeed Matrix:\n");
+
+            	     for(int i = 0; i < 5; i++)
+            		{
+                	  for(int j = 0; j < 3; j++)
+                    		printf("%d ", m[i][j]);
+                	printf("\t\t");
+                	  for(int j = 0; j < 3; j++)
+                    		printf("%d ", alc[i][j]);
+			printf("\t\t");
+			   for(int j=0;j<3;j++)
+				printf("%d ",n[i][j]);			
+                	printf("\n");
+            	      }
+
+            		soun = -1;
+
+            	   for(int i = 0; i < 5; i++)
+            		{
+                	   if(co[i] == 0)
+                		{
+                    			soun = i ;
+                    			for(int j = 0; j < 3; j++)
+                    			{
+                        			if(ava[j] < n[i][j])
+                        				{
+                          					soun = -1;
+                            					break;
+                        			}
+                    			}
+                		}
+                		if(soun != -1)
+                    		break;
+            		}
+
+            		if(soun != -1)
+            		{
+                		printf("\nThread %d executed", soun + 1);
+                		ss[count] = soun + 1;
+                		count++;
+                		for(int j = 0; j < 3; j++)
+                			{
+                    				ava[j] += alc[soun][j];
+                    				alc[soun][j] = 0;
+                    				m[soun][j] = 0;
+                    				co[soun] = 1;
+                		}
+            		}
+        	}
+        	while(count !=5  && soun != -1);
+
+        	if(count == 5)
+        	{
+            		printf("\nThe system is in a safe state!! 5\n");
+            		printf("Safe Sequence : < ");
+            		for(int i = 0; i < 5; i++)
+                		printf("%d ", ss[i]);
+            		printf(">\n");
+			sc++;
+	    		check=x1;
+        	}
+        	else{printf("func5 else");
+	    		check=x1;
+            		printf("\nThe system is in an unsafe state!! 5");
+		}
+	}
+	
+		int x=shared;
+		
+		x++;
+		sleep(1);
+		shared =x;
+		pthread_mutex_unlock(&l);
+}
+void *fun3(){
+	pthread_mutex_lock(&l);
+	int x1=-1;
+	if(check ==0){
+		printf("this is function 5 if");  		
+		do
+        	{
+            	     printf("\n Max matrix:\talcation matrix:\tNeed Matrix:\n");
+
+            	     for(int i = 0; i < 5; i++)
+            		{
+                	  for(int j = 0; j < 3; j++)
+                    		printf("%d ", m[i][j]);
+                	printf("\t\t");
+                	  for(int j = 0; j < 3; j++)
+                    		printf("%d ", alc[i][j]);
+			printf("\t\t");
+			   for(int j=0;j<3;j++)
+				printf("%d ",n[i][j]);			
+                	printf("\n");
+            	      }
+
+            		soun = -1;
+
+            	   for(int i = 0; i < 5; i++)
+            		{
+                	   if(co[i] == 0)
+                		{
+                    			soun = i ;
+                    			for(int j = 0; j < 3; j++)
+                    			{
+                        			if(ava[j] < n[i][j])
+                        				{
+                          					soun = -1;
+                            					break;
+                        			}
+                    			}
+                		}
+                		if(soun != -1)
+                    		break;
+            		}
+
+            		if(soun != -1)
+            		{
+                		printf("\nThread %d executed", soun + 1);
+                		ss[count] = soun + 1;
+                		count++;
+                		for(int j = 0; j < 3; j++)
+                			{
+                    				ava[j] += alc[soun][j];
+                    				alc[soun][j] = 0;
+                    				m[soun][j] = 0;
+                    				co[soun] = 1;
+                		}
+            		}
+        	}
+        	while(count !=5  && soun != -1);
+
+        	if(count == 5)
+        	{
+            		printf("\nThe system is in a safe state!! 5\n");
+            		printf("Safe Sequence : < ");
+            		for(int i = 0; i < 5; i++)
+                		printf("%d ", ss[i]);
+            		printf(">\n");
+			sc++;
+	    		check=x1;
+        	}
+        	else{printf("func5 else");
+	    		check=x1;
+            		printf("\nThe system is in an unsafe state!! 5");
+		}
+	}
+	
+		int x=shared;
+		
+		x++;
+		sleep(1);
+		shared =x;
+		pthread_mutex_unlock(&l);}
+void *fun4(){
+	pthread_mutex_lock(&l);
+	int x1=-1;
+	if(check ==0){
+		printf("this is function 5 if");  		
+		do
+        	{
+            	     printf("\n Max matrix:\talcation matrix:\tNeed Matrix:\n");
+
+            	     for(int i = 0; i < 5; i++)
+            		{
+                	  for(int j = 0; j < 3; j++)
+                    		printf("%d ", m[i][j]);
+                	printf("\t\t");
+                	  for(int j = 0; j < 3; j++)
+                    		printf("%d ", alc[i][j]);
+			printf("\t\t");
+			   for(int j=0;j<3;j++)
+				printf("%d ",n[i][j]);			
+                	printf("\n");
+            	      }
+
+            		soun = -1;
+
+            	   for(int i = 0; i < 5; i++)
+            		{
+                	   if(co[i] == 0)
+                		{
+                    			soun = i ;
+                    			for(int j = 0; j < 3; j++)
+                    			{
+                        			if(ava[j] < n[i][j])
+                        				{
+                          					soun = -1;
+                            					break;
+                        			}
+                    			}
+                		}
+                		if(soun != -1)
+                    		break;
+            		}
+
+            		if(soun != -1)
+            		{
+                		printf("\nThread %d executed", soun + 1);
+                		ss[count] = soun + 1;
+                		count++;
+                		for(int j = 0; j < 3; j++)
+                			{
+                    				ava[j] += alc[soun][j];
+                    				alc[soun][j] = 0;
+                    				m[soun][j] = 0;
+                    				co[soun] = 1;
+                		}
+            		}
+        	}
+        	while(count !=5  && soun != -1);
+
+        	if(count == 5)
+        	{
+            		printf("\nThe system is in a safe state!! 5\n");
+            		printf("Safe Sequence : < ");
+            		for(int i = 0; i < 5; i++)
+                		printf("%d ", ss[i]);
+            		printf(">\n");
+			sc++;
+	    		check=x1;
+        	}
+        	else{printf("func5 else");
+	    		check=x1;
+            		printf("\nThe system is in an unsafe state!! 5");
+		}
+	}
+	
+		int x=shared;
+		
+		x++;
+		sleep(1);
+		shared =x;
+		pthread_mutex_unlock(&l);	}
+void *fun5(){
+	pthread_mutex_lock(&l);
+	int x1=-1;
+		if(check ==0){
+		printf("this is function 5 if");  		
+		do
+        	{
+            	     printf("\n Max matrix:\talcation matrix:\tNeed Matrix:\n");
+
+            	     for(int i = 0; i < 5; i++)
+            		{
+                	  for(int j = 0; j < 3; j++)
+                    		printf("%d ", m[i][j]);
+                	printf("\t\t");
+                	  for(int j = 0; j < 3; j++)
+                    		printf("%d ", alc[i][j]);
+			printf("\t\t");
+			   for(int j=0;j<3;j++)
+				printf("%d ",n[i][j]);			
+                	printf("\n");
+            	      }
+
+            		soun = -1;
+
+            	   for(int i = 0; i < 5; i++)
+            		{
+                	   if(co[i] == 0)
+                		{
+                    			soun = i ;
+                    			for(int j = 0; j < 3; j++)
+                    			{
+                        			if(ava[j] < n[i][j])
+                        				{
+                          					soun = -1;
+                            					break;
+                        			}
+                    			}
+                		}
+                		if(soun != -1)
+                    		break;
+            		}
+
+            		if(soun != -1)
+            		{
+                		printf("\nThread %d executed", soun + 1);
+                		ss[count] = soun + 1;
+                		count++;
+                		for(int j = 0; j < 3; j++)
+                			{
+                    				ava[j] += alc[soun][j];
+                    				alc[soun][j] = 0;
+                    				m[soun][j] = 0;
+                    				co[soun] = 1;
+                		}
+            		}
+        	}
+        	while(count !=5  && soun != -1);
+
+        	if(count == 5)
+        	{
+            		printf("\nThe system is in a safe state!! 5\n");
+            		printf("Safe Sequence : < ");
+            		for(int i = 0; i < 5; i++)
+                		printf("%d ", ss[i]);
+            		printf(">\n");
+			sc++;
+	    		check=x1;
+        	}
+        	else{printf("func5 else");
+	    		check=x1;
+            		printf("\nThe system is in an unsafe state!! 5");
+		}
+
+	}
+	
+		
+		int x=shared;
+		x++;
+		sleep(1);
+		shared =x;
+		pthread_mutex_unlock(&l);	
+}
